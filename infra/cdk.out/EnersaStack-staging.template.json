@@ -1,0 +1,3296 @@
+{
+ "Resources": {
+  "stagingsqsenersastagingdlq52AA110A": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "MessageRetentionPeriod": 1209600,
+    "QueueName": "enersa-staging-dlq"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-sqs/enersa-staging-dlq/Resource"
+   }
+  },
+  "stagingsqsenersastagingmainqueueAAFD2147": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "QueueName": "enersa-staging-main-queue",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "stagingsqsenersastagingdlq52AA110A",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "VisibilityTimeout": 30
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-sqs/enersa-staging-main-queue/Resource"
+   }
+  },
+  "stagingsqsenersastagingsqsprocessorServiceRoleC6D3ADD5": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-sqs/enersa-staging-sqs-processor/ServiceRole/Resource"
+   }
+  },
+  "stagingsqsenersastagingsqsprocessorServiceRoleDefaultPolicy437B626A": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingsqsenersastagingmainqueueAAFD2147",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingsqsenersastagingsqsprocessorServiceRoleDefaultPolicy437B626A",
+    "Roles": [
+     {
+      "Ref": "stagingsqsenersastagingsqsprocessorServiceRoleC6D3ADD5"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-sqs/enersa-staging-sqs-processor/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingsqsenersastagingsqsprocessor1860B731": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "46432190cbc6bf72f5230f5514f4df4d2279bc5d12c583d61eaf6675aaeb5385.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "QUEUE_URL": {
+       "Ref": "stagingsqsenersastagingmainqueueAAFD2147"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-send-sqs-event",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingsqsenersastagingsqsprocessorServiceRoleC6D3ADD5",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "stagingsqsenersastagingsqsprocessorServiceRoleDefaultPolicy437B626A",
+    "stagingsqsenersastagingsqsprocessorServiceRoleC6D3ADD5"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-sqs/enersa-staging-sqs-processor/Resource",
+    "aws:asset:path": "asset.46432190cbc6bf72f5230f5514f4df4d2279bc5d12c583d61eaf6675aaeb5385",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagings3enersastagingemailimagesB49A97F0": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "enersa-staging-email-template-images",
+    "CorsConfiguration": {
+     "CorsRules": [
+      {
+       "AllowedHeaders": [
+        "*"
+       ],
+       "AllowedMethods": [
+        "GET"
+       ],
+       "AllowedOrigins": [
+        "*"
+       ]
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": false,
+     "BlockPublicPolicy": false,
+     "IgnorePublicAcls": false,
+     "RestrictPublicBuckets": false
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:cr-owned:be9f03f1",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-s3/enersa-staging-email-images/Resource"
+   }
+  },
+  "stagings3enersastagingemailimagesPolicy08949076": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "stagings3enersastagingemailimagesB49A97F0"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:GetObject",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "stagings3enersastagingemailimagesB49A97F0",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-s3/enersa-staging-email-images/Policy/Resource"
+   }
+  },
+  "stagings3enersastagingdeployimagesAwsCliLayer7142F389": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "1be473fb31b9ca92b2826d87592d6b342ab66fd93f4ba4e1a60e5920ced9e94c.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-s3/enersa-staging-deploy-images/AwsCliLayer/Resource",
+    "aws:asset:path": "asset.1be473fb31b9ca92b2826d87592d6b342ab66fd93f4ba4e1a60e5920ced9e94c.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "stagings3enersastagingdeployimagesCustomResource61567059": {
+   "Type": "Custom::CDKBucketDeployment",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+      "Arn"
+     ]
+    },
+    "SourceBucketNames": [
+     {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     }
+    ],
+    "SourceObjectKeys": [
+     "b1094b1e63ca9e6b0c44ae7ddf6b758bbb789f693fe3c201ed8f56bc81ecf863.zip"
+    ],
+    "DestinationBucketName": {
+     "Ref": "stagings3enersastagingemailimagesB49A97F0"
+    },
+    "RetainOnDelete": false,
+    "Prune": true,
+    "OutputObjectKeys": true
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-s3/enersa-staging-deploy-images/CustomResource/Default"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           }
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "stagings3enersastagingemailimagesB49A97F0",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "stagings3enersastagingemailimagesB49A97F0",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "Roles": [
+     {
+      "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "c6358465bf49dfae556bb430bf9c81fa578c221b82c308e3707901b1dd654762.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+     }
+    },
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "stagings3enersastagingdeployimagesAwsCliLayer7142F389"
+     }
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+    "aws:asset:path": "asset.c6358465bf49dfae556bb430bf9c81fa578c221b82c308e3707901b1dd654762",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbenersastagingemailtableE7434C82": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "emailId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "estado",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "emailId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "estado",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "enersa-staging-email-table"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-email-table/Resource"
+   }
+  },
+  "stagingdynamodbenersastagingcronServiceRoleAF1A52F1": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-cron/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbenersastagingcronServiceRoleDefaultPolicyD541564F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbenersastagingemailtableE7434C82",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "stagingsqsenersastagingmainqueueAAFD2147",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbenersastagingcronServiceRoleDefaultPolicyD541564F",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbenersastagingcronServiceRoleAF1A52F1"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-cron/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbenersastagingcronEA374A52": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "6290cd8481272e822ea5c4b19151a62338dbca22f415c67ff1c1f990762463e9.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      },
+      "QUEUE_URL": {
+       "Ref": "stagingsqsenersastagingmainqueueAAFD2147"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-cron",
+    "Handler": "cron-job.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastagingcronServiceRoleAF1A52F1",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbenersastagingcronServiceRoleDefaultPolicyD541564F",
+    "stagingdynamodbenersastagingcronServiceRoleAF1A52F1"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-cron/Resource",
+    "aws:asset:path": "asset.6290cd8481272e822ea5c4b19151a62338dbca22f415c67ff1c1f990762463e9",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbenersastaginggetinfoServiceRoleA2D66070": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-get-info/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbenersastaginggetinfoServiceRoleDefaultPolicy75F713B8": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbenersastagingemailtableE7434C82",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "stagingsqsenersastagingmainqueueAAFD2147",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbenersastaginggetinfoServiceRoleDefaultPolicy75F713B8",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbenersastaginggetinfoServiceRoleA2D66070"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-get-info/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbenersastaginggetinfo1CE2C823": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-info",
+    "Handler": "get-info.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastaginggetinfoServiceRoleA2D66070",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbenersastaginggetinfoServiceRoleDefaultPolicy75F713B8",
+    "stagingdynamodbenersastaginggetinfoServiceRoleA2D66070"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-get-info/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbenersastaginggetallbyfechaServiceRole9DF94013": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-get-all-by-fecha/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbenersastaginggetallbyfechaServiceRoleDefaultPolicy7E6DF2B3": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingdynamodbenersastagingemailtableE7434C82",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbenersastaginggetallbyfechaServiceRoleDefaultPolicy7E6DF2B3",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbenersastaginggetallbyfechaServiceRole9DF94013"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-get-all-by-fecha/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbenersastaginggetallbyfecha7FD49058": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-all-by-fecha",
+    "Handler": "getAllbyFecha.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastaginggetallbyfechaServiceRole9DF94013",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbenersastaginggetallbyfechaServiceRoleDefaultPolicy7E6DF2B3",
+    "stagingdynamodbenersastaginggetallbyfechaServiceRole9DF94013"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/enersa-staging-get-all-by-fecha/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbGetAllByEstadoLambdaServiceRole96D9DB8D": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetAllByEstadoLambda/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy5BC0AACB": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingdynamodbenersastagingemailtableE7434C82",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy5BC0AACB",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbGetAllByEstadoLambdaServiceRole96D9DB8D"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetAllByEstadoLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbGetAllByEstadoLambda6D4742CE": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-all-by-estado",
+    "Handler": "getAllByEstado.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetAllByEstadoLambdaServiceRole96D9DB8D",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy5BC0AACB",
+    "stagingdynamodbGetAllByEstadoLambdaServiceRole96D9DB8D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetAllByEstadoLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbGetByEstadoLambdaServiceRole58595880": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByEstadoLambda/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbGetByEstadoLambdaServiceRoleDefaultPolicy6D5DE758": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingdynamodbenersastagingemailtableE7434C82",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbGetByEstadoLambdaServiceRoleDefaultPolicy6D5DE758",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbGetByEstadoLambdaServiceRole58595880"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByEstadoLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbGetByEstadoLambda8BBA2249": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-by-estado",
+    "Handler": "getByEstado.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByEstadoLambdaServiceRole58595880",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbGetByEstadoLambdaServiceRoleDefaultPolicy6D5DE758",
+    "stagingdynamodbGetByEstadoLambdaServiceRole58595880"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByEstadoLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbGetByFechaLambdaServiceRoleB7323246": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByFechaLambda/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbGetByFechaLambdaServiceRoleDefaultPolicy99D796CF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingdynamodbenersastagingemailtableE7434C82",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbGetByFechaLambdaServiceRoleDefaultPolicy99D796CF",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbGetByFechaLambdaServiceRoleB7323246"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByFechaLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbGetByFechaLambda3AD9756C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-by-fecha",
+    "Handler": "getByFecha.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByFechaLambdaServiceRoleB7323246",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbGetByFechaLambdaServiceRoleDefaultPolicy99D796CF",
+    "stagingdynamodbGetByFechaLambdaServiceRoleB7323246"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByFechaLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbGetAllByEmailLambdaServiceRoleBEDB86A7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetAllByEmailLambda/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicyA635E42D": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingdynamodbenersastagingemailtableE7434C82",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicyA635E42D",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbGetAllByEmailLambdaServiceRoleBEDB86A7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetAllByEmailLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbGetAllByEmailLambdaB9C87E63": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-all-by-email",
+    "Handler": "getAllByEmail.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetAllByEmailLambdaServiceRoleBEDB86A7",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicyA635E42D",
+    "stagingdynamodbGetAllByEmailLambdaServiceRoleBEDB86A7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetAllByEmailLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbGetByEmailLambdaServiceRole43DC6D91": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByEmailLambda/ServiceRole/Resource"
+   }
+  },
+  "stagingdynamodbGetByEmailLambdaServiceRoleDefaultPolicy7EA61859": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingdynamodbenersastagingemailtableE7434C82",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingdynamodbGetByEmailLambdaServiceRoleDefaultPolicy7EA61859",
+    "Roles": [
+     {
+      "Ref": "stagingdynamodbGetByEmailLambdaServiceRole43DC6D91"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByEmailLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingdynamodbGetByEmailLambdaE7646FED": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-get-by-email",
+    "Handler": "getByEmail.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByEmailLambdaServiceRole43DC6D91",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingdynamodbGetByEmailLambdaServiceRoleDefaultPolicy7EA61859",
+    "stagingdynamodbGetByEmailLambdaServiceRole43DC6D91"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/GetByEmailLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingdynamodbHourlyCronRuleFA73AA35": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "ScheduleExpression": "rate(1 hour)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "stagingdynamodbenersastagingcronEA374A52",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/HourlyCronRule/Resource"
+   }
+  },
+  "stagingdynamodbHourlyCronRuleAllowEventRuleEnersaStackstagingstagingdynamodbenersastagingcronEEA86C8613E05024": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastagingcronEA374A52",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "stagingdynamodbHourlyCronRuleFA73AA35",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-dynamodb/HourlyCronRule/AllowEventRuleEnersaStackstagingstagingdynamodbenersastagingcronEEA86C86"
+   }
+  },
+  "stagingsesenersastagingsesconfig0AE12B9C": {
+   "Type": "AWS::SES::ConfigurationSet",
+   "Properties": {
+    "Name": "enersa-staging-ses-config"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-config"
+   }
+  },
+  "stagingsesenersastagingsestopic8D3D40DB": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "enersa-staging-SES Notifications Topic",
+    "TopicName": "enersa-staging-ses-notifications"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-topic/Resource"
+   }
+  },
+  "stagingsesenersastagingseseventsServiceRoleF75D202E": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-events/ServiceRole/Resource"
+   }
+  },
+  "stagingsesenersastagingseseventsServiceRoleDefaultPolicy71181538": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingsesenersastagingseseventsServiceRoleDefaultPolicy71181538",
+    "Roles": [
+     {
+      "Ref": "stagingsesenersastagingseseventsServiceRoleF75D202E"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-events/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingsesenersastagingsesevents5E69D514": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "4100e18d51dc4e9233cead7e2f21526d10bbe300b80384d93831350b03001d7f.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "S3URL": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Ref": "stagings3enersastagingemailimagesB49A97F0"
+         },
+         ".s3.",
+         {
+          "Ref": "AWS::Region"
+         },
+         ".amazonaws.com"
+        ]
+       ]
+      },
+      "SQSURL": {
+       "Ref": "stagingsqsenersastagingmainqueueAAFD2147"
+      },
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-ses-events",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingsesenersastagingseseventsServiceRoleF75D202E",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingsesenersastagingseseventsServiceRoleDefaultPolicy71181538",
+    "stagingsesenersastagingseseventsServiceRoleF75D202E"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-events/Resource",
+    "aws:asset:path": "asset.4100e18d51dc4e9233cead7e2f21526d10bbe300b80384d93831350b03001d7f",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingsesenersastagingseseventsAllowSNSInvoke3C28DA3D": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingsesenersastagingsesevents5E69D514",
+      "Arn"
+     ]
+    },
+    "Principal": "sns.amazonaws.com",
+    "SourceArn": {
+     "Ref": "stagingsesenersastagingsestopic8D3D40DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-events/AllowSNSInvoke"
+   }
+  },
+  "stagingsesenersastagingseseventsAllowInvokeEnersaStackstagingstagingsesenersastagingsestopic23B5560A39E165CE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingsesenersastagingsesevents5E69D514",
+      "Arn"
+     ]
+    },
+    "Principal": "sns.amazonaws.com",
+    "SourceArn": {
+     "Ref": "stagingsesenersastagingsestopic8D3D40DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-events/AllowInvoke:EnersaStackstagingstagingsesenersastagingsestopic23B5560A"
+   }
+  },
+  "stagingsesenersastagingseseventsenersastagingsestopic137F2054": {
+   "Type": "AWS::SNS::Subscription",
+   "Properties": {
+    "Endpoint": {
+     "Fn::GetAtt": [
+      "stagingsesenersastagingsesevents5E69D514",
+      "Arn"
+     ]
+    },
+    "Protocol": "lambda",
+    "TopicArn": {
+     "Ref": "stagingsesenersastagingsestopic8D3D40DB"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-ses-events/enersa-staging-ses-topic/Resource"
+   }
+  },
+  "stagingsesSesEventDestinationC5DBD46E": {
+   "Type": "AWS::SES::ConfigurationSetEventDestination",
+   "Properties": {
+    "ConfigurationSetName": "enersa-staging-ses-config",
+    "EventDestination": {
+     "Enabled": true,
+     "MatchingEventTypes": [
+      "send",
+      "delivery",
+      "open",
+      "click"
+     ],
+     "SnsDestination": {
+      "TopicARN": {
+       "Ref": "stagingsesenersastagingsestopic8D3D40DB"
+      }
+     }
+    }
+   },
+   "DependsOn": [
+    "stagingsesenersastagingsesconfig0AE12B9C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/SesEventDestination"
+   }
+  },
+  "stagingsesenersastagingsendemailServiceRoleFFCF7FC7": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-send-email/ServiceRole/Resource"
+   }
+  },
+  "stagingsesenersastagingsendemailServiceRoleDefaultPolicyAC9E5A4B": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "stagingsqsenersastagingmainqueueAAFD2147",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "stagingsesenersastagingsendemailServiceRoleDefaultPolicyAC9E5A4B",
+    "Roles": [
+     {
+      "Ref": "stagingsesenersastagingsendemailServiceRoleFFCF7FC7"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-send-email/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "stagingsesenersastagingsendemail60835D39": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "380b9eb9d60eb4739e9676e217391f299e735024b8abaa529dafcc66dff8104b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "S3URL": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Ref": "stagings3enersastagingemailimagesB49A97F0"
+         },
+         ".s3.",
+         {
+          "Ref": "AWS::Region"
+         },
+         ".amazonaws.com"
+        ]
+       ]
+      },
+      "SQSURL": {
+       "Ref": "stagingsqsenersastagingmainqueueAAFD2147"
+      },
+      "TABLENAME": {
+       "Ref": "stagingdynamodbenersastagingemailtableE7434C82"
+      }
+     }
+    },
+    "FunctionName": "enersa-staging-send-email",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "stagingsesenersastagingsendemailServiceRoleFFCF7FC7",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "stagingsesenersastagingsendemailServiceRoleDefaultPolicyAC9E5A4B",
+    "stagingsesenersastagingsendemailServiceRoleFFCF7FC7"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-send-email/Resource",
+    "aws:asset:path": "asset.380b9eb9d60eb4739e9676e217391f299e735024b8abaa529dafcc66dff8104b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "stagingsesenersastagingsendemailSqsEventSourceEnersaStackstagingstagingsqsenersastagingmainqueue505908145E4FAE19": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "stagingsqsenersastagingmainqueueAAFD2147",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "stagingsesenersastagingsendemail60835D39"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-ses/enersa-staging-send-email/SqsEventSource:EnersaStackstagingstagingsqsenersastagingmainqueue50590814/Resource"
+   }
+  },
+  "stagingapienersastagingapi2FF5A420": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "API Gateway para manejar las solicitudes de enviar correos y obtener información.",
+    "Name": "enersa-staging-api"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Resource"
+   }
+  },
+  "stagingapienersastagingapiDeployment9198CD4557bec6dae69912a77eb01510e2b60eec": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "API Gateway para manejar las solicitudes de enviar correos y obtener información.",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "DependsOn": [
+    "stagingapienersastagingapienersastagingenviarmailsPOSTA95C66DD",
+    "stagingapienersastagingapienersastagingenviarmails0D6E8FF3",
+    "stagingapienersastagingapienersastaginggetinfoGET83390287",
+    "stagingapienersastagingapienersastaginggetinfo35D0ED57",
+    "stagingapienersastagingapigetAllByEmailGET439E8E8E",
+    "stagingapienersastagingapigetAllByEmail6E9069CC",
+    "stagingapienersastagingapigetAllByEstadoGETEA46A681",
+    "stagingapienersastagingapigetAllByEstado2E9880ED",
+    "stagingapienersastagingapigetAllByFechaGETA23D21FD",
+    "stagingapienersastagingapigetAllByFechaE90883FC",
+    "stagingapienersastagingapigetByEmailGETFAC0611C",
+    "stagingapienersastagingapigetByEmailD4EA5F8D",
+    "stagingapienersastagingapigetByEstadoGETBE4B074D",
+    "stagingapienersastagingapigetByEstado650B0C7E",
+    "stagingapienersastagingapigetByFechaGETE09394A4",
+    "stagingapienersastagingapigetByFechaB2944153"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Deployment/Resource"
+   }
+  },
+  "stagingapienersastagingapiDeploymentStageprod4548C8EB": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "stagingapienersastagingapiDeployment9198CD4557bec6dae69912a77eb01510e2b60eec"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/DeploymentStage.prod/Resource"
+   }
+  },
+  "stagingapienersastagingapienersastagingenviarmails0D6E8FF3": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "enersa-staging-enviar-mails",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-enviar-mails/Resource"
+   }
+  },
+  "stagingapienersastagingapienersastagingenviarmailsPOSTApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BPOSTenersastagingenviarmailsB488E5E6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingsqsenersastagingsqsprocessor1860B731",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/POST/enersa-staging-enviar-mails"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-enviar-mails/POST/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.POST..enersa-staging-enviar-mails"
+   }
+  },
+  "stagingapienersastagingapienersastagingenviarmailsPOSTApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BPOSTenersastagingenviarmailsFCDF6FA9": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingsqsenersastagingsqsprocessor1860B731",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/POST/enersa-staging-enviar-mails"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-enviar-mails/POST/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.POST..enersa-staging-enviar-mails"
+   }
+  },
+  "stagingapienersastagingapienersastagingenviarmailsPOSTA95C66DD": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingsqsenersastagingsqsprocessor1860B731",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapienersastagingenviarmails0D6E8FF3"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-enviar-mails/POST/Resource"
+   }
+  },
+  "stagingapienersastagingapienersastaginggetinfo35D0ED57": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "enersa-staging-get-info",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-get-info/Resource"
+   }
+  },
+  "stagingapienersastagingapienersastaginggetinfoGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETenersastaginggetinfo190205D2": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastaginggetinfo1CE2C823",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/enersa-staging-get-info"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-get-info/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..enersa-staging-get-info"
+   }
+  },
+  "stagingapienersastagingapienersastaginggetinfoGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETenersastaginggetinfo1D5017B6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastaginggetinfo1CE2C823",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/enersa-staging-get-info"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-get-info/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..enersa-staging-get-info"
+   }
+  },
+  "stagingapienersastagingapienersastaginggetinfoGET83390287": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbenersastaginggetinfo1CE2C823",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapienersastaginggetinfo35D0ED57"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/enersa-staging-get-info/GET/Resource"
+   }
+  },
+  "stagingapienersastagingapigetAllByFechaE90883FC": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getAllByFecha",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByFecha/Resource"
+   }
+  },
+  "stagingapienersastagingapigetAllByFechaGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETgetAllByFecha7E5F995A": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastaginggetallbyfecha7FD49058",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/getAllByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByFecha/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getAllByFecha"
+   }
+  },
+  "stagingapienersastagingapigetAllByFechaGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETgetAllByFechaACFC35CF": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbenersastaginggetallbyfecha7FD49058",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/getAllByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByFecha/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getAllByFecha"
+   }
+  },
+  "stagingapienersastagingapigetAllByFechaGETA23D21FD": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbenersastaginggetallbyfecha7FD49058",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapigetAllByFechaE90883FC"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByFecha/GET/Resource"
+   }
+  },
+  "stagingapienersastagingapigetAllByEstado2E9880ED": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getAllByEstado",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEstado/Resource"
+   }
+  },
+  "stagingapienersastagingapigetAllByEstadoGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETgetAllByEstado5A7F0E8E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetAllByEstadoLambda6D4742CE",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/getAllByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEstado/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getAllByEstado"
+   }
+  },
+  "stagingapienersastagingapigetAllByEstadoGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETgetAllByEstado44E122A1": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetAllByEstadoLambda6D4742CE",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/getAllByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEstado/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getAllByEstado"
+   }
+  },
+  "stagingapienersastagingapigetAllByEstadoGETEA46A681": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbGetAllByEstadoLambda6D4742CE",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapigetAllByEstado2E9880ED"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEstado/GET/Resource"
+   }
+  },
+  "stagingapienersastagingapigetByEstado650B0C7E": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getByEstado",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEstado/Resource"
+   }
+  },
+  "stagingapienersastagingapigetByEstadoGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETgetByEstado179BBEF4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByEstadoLambda8BBA2249",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/getByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEstado/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getByEstado"
+   }
+  },
+  "stagingapienersastagingapigetByEstadoGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETgetByEstado0D14D3EE": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByEstadoLambda8BBA2249",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/getByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEstado/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getByEstado"
+   }
+  },
+  "stagingapienersastagingapigetByEstadoGETBE4B074D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbGetByEstadoLambda8BBA2249",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapigetByEstado650B0C7E"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEstado/GET/Resource"
+   }
+  },
+  "stagingapienersastagingapigetByFechaB2944153": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getByFecha",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByFecha/Resource"
+   }
+  },
+  "stagingapienersastagingapigetByFechaGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETgetByFecha19E9AE6D": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByFechaLambda3AD9756C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/getByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByFecha/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getByFecha"
+   }
+  },
+  "stagingapienersastagingapigetByFechaGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETgetByFecha2A07DE52": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByFechaLambda3AD9756C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/getByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByFecha/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getByFecha"
+   }
+  },
+  "stagingapienersastagingapigetByFechaGETE09394A4": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbGetByFechaLambda3AD9756C",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapigetByFechaB2944153"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByFecha/GET/Resource"
+   }
+  },
+  "stagingapienersastagingapigetAllByEmail6E9069CC": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getAllByEmail",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEmail/Resource"
+   }
+  },
+  "stagingapienersastagingapigetAllByEmailGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETgetAllByEmailDA42986D": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetAllByEmailLambdaB9C87E63",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/getAllByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEmail/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getAllByEmail"
+   }
+  },
+  "stagingapienersastagingapigetAllByEmailGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETgetAllByEmailF6B958FA": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetAllByEmailLambdaB9C87E63",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/getAllByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEmail/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getAllByEmail"
+   }
+  },
+  "stagingapienersastagingapigetAllByEmailGET439E8E8E": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbGetAllByEmailLambdaB9C87E63",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapigetAllByEmail6E9069CC"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getAllByEmail/GET/Resource"
+   }
+  },
+  "stagingapienersastagingapigetByEmailD4EA5F8D": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "stagingapienersastagingapi2FF5A420",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getByEmail",
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEmail/Resource"
+   }
+  },
+  "stagingapienersastagingapigetByEmailGETApiPermissionEnersaStackstagingstagingapienersastagingapiA818329BGETgetByEmail93A03D97": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByEmailLambdaE7646FED",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/",
+       {
+        "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+       },
+       "/GET/getByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEmail/GET/ApiPermission.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getByEmail"
+   }
+  },
+  "stagingapienersastagingapigetByEmailGETApiPermissionTestEnersaStackstagingstagingapienersastagingapiA818329BGETgetByEmail3BC93708": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "stagingdynamodbGetByEmailLambdaE7646FED",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "stagingapienersastagingapi2FF5A420"
+       },
+       "/test-invoke-stage/GET/getByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEmail/GET/ApiPermission.Test.EnersaStackstagingstagingapienersastagingapiA818329B.GET..getByEmail"
+   }
+  },
+  "stagingapienersastagingapigetByEmailGETFAC0611C": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "stagingdynamodbGetByEmailLambdaE7646FED",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "stagingapienersastagingapigetByEmailD4EA5F8D"
+    },
+    "RestApiId": {
+     "Ref": "stagingapienersastagingapi2FF5A420"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/staging-api/enersa-staging-api/Default/getByEmail/GET/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21STW/bMAz9Lb0r3JoW2Dl1t9OKdnaxa0DLjMdGljxTqmEI/u+DpGTJPk58fCLIp0du4fbTHWxvcJaN7o4bwy3ExqM+KpxlH+WnQPwWKJCqDjaDVRkc2g4hfglWe3Y2PV3jr7jQ9J0mSXnDtjfk3R8VLzQNLPn98ztZ37gwaXrCcWTbp4J/2VUxDhBrZ7KUHF+cYb3khhmtSu72EUXIC+xSUB2Nxi0DWQ8PQR/JP/4mUjXEwj6gkCowtTuhEi5TrvNVdYvFwXUtxFdsi6oMVkVJvUCsw0lsSKyQQKwOtnL2wH2YMLnRlIF/c/n/jySebaZWJVYgvrqRdR6UQRNa0ROPZ1uv81XhyD16mnGBWJP43chZzAlejEjsVdZ47LPsAmqSvIds0Tk5NSr4ifwP1yWqoHW91OUtpEZpseVw9ibdxx5n0YZhN0tlOJ+MqoJ4N/x3RnWwz8GP4exWx+WT1nUEb/LhfbuF23v4ePMmzJspWM8DQV3iL/JEDqDmAgAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-staging/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "stagings3enersastagingbucketname28A5CC8C": {
+   "Value": {
+    "Ref": "stagings3enersastagingemailimagesB49A97F0"
+   }
+  },
+  "stagings3enersastagingbucketurl0078EA42": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "stagings3enersastagingemailimagesB49A97F0"
+      },
+      ".s3.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".amazonaws.com"
+     ]
+    ]
+   }
+  },
+  "stagingapienersastagingapiEndpoint0708AE2A": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "stagingapienersastagingapi2FF5A420"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "stagingapienersastagingapiDeploymentStageprod4548C8EB"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,1283 @@
+{
+  "version": "38.0.1",
+  "artifacts": {
+    "EnersaStack-dev.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "EnersaStack-dev.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "EnersaStack-dev": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "EnersaStack-dev.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7e7c90065844973546dce764547f2bc6f294181acba0294d7b54f83e5595da48.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "EnersaStack-dev.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "EnersaStack-dev.assets"
+      ],
+      "metadata": {
+        "/EnersaStack-dev/dev-sqs/enersa-dev-dlq/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsqsenersadevdlqAD64F850"
+          }
+        ],
+        "/EnersaStack-dev/dev-sqs/enersa-dev-main-queue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsqsenersadevmainqueueDBA1129B"
+          }
+        ],
+        "/EnersaStack-dev/dev-sqs/enersa-dev-sqs-processor/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsqsenersadevsqsprocessorServiceRoleE9A42CA2"
+          }
+        ],
+        "/EnersaStack-dev/dev-sqs/enersa-dev-sqs-processor/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsqsenersadevsqsprocessorServiceRoleDefaultPolicy379BC62A"
+          }
+        ],
+        "/EnersaStack-dev/dev-sqs/enersa-dev-sqs-processor/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsqsenersadevsqsprocessorBD7C50CE"
+          }
+        ],
+        "/EnersaStack-dev/dev-s3/enersa-dev-email-images/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devs3enersadevemailimagesA96C75BA"
+          }
+        ],
+        "/EnersaStack-dev/dev-s3/enersa-dev-email-images/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devs3enersadevemailimagesPolicy6BB35F1B"
+          }
+        ],
+        "/EnersaStack-dev/dev-s3/enersa-dev-deploy-images/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devs3enersadevdeployimagesAwsCliLayer6BC9F6BB"
+          }
+        ],
+        "/EnersaStack-dev/dev-s3/enersa-dev-deploy-images/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devs3enersadevdeployimagesCustomResource3876E25B"
+          }
+        ],
+        "/EnersaStack-dev/dev-s3/enersa-dev-bucket-name": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devs3enersadevbucketnameA98B6785"
+          }
+        ],
+        "/EnersaStack-dev/dev-s3/enersa-dev-bucket-url": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devs3enersadevbucketurl291FC14E"
+          }
+        ],
+        "/EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 2
+          }
+        ],
+        "/EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ],
+        "/EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF"
+          }
+        ],
+        "/EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-email-table": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "devdynamodbenersadevemailtable28C441F9"
+            }
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-email-table/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevemailtable28C441F9"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-cron/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevcronServiceRole0FCDE7CC"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-cron/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevcronServiceRoleDefaultPolicyE7FE4378"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-cron/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevcron97DDF707"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-get-info/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevgetinfoServiceRole4D14A7E0"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-get-info/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevgetinfoServiceRoleDefaultPolicy1F4959B6"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-get-info/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevgetinfo58B62CDA"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-get-all-by-fecha/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevgetallbyfechaServiceRole8E349DBA"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-get-all-by-fecha/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevgetallbyfechaServiceRoleDefaultPolicy7ABC2BF1"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/enersa-dev-get-all-by-fecha/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbenersadevgetallbyfecha8C6B7386"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetAllByEstadoLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetAllByEstadoLambdaServiceRole08C5C784"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetAllByEstadoLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy6B11A09F"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetAllByEstadoLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetAllByEstadoLambda31B6C47C"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByEstadoLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByEstadoLambdaServiceRoleE05DE9E6"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByEstadoLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByEstadoLambdaServiceRoleDefaultPolicyF5E3B672"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByEstadoLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByEstadoLambda9307FEE2"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByFechaLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByFechaLambdaServiceRole994B2096"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByFechaLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByFechaLambdaServiceRoleDefaultPolicy72FA4AF4"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByFechaLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByFechaLambdaC236958F"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetAllByEmailLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetAllByEmailLambdaServiceRoleCCD9544A"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetAllByEmailLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicy220329FF"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetAllByEmailLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetAllByEmailLambdaE6CD8BAB"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByEmailLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByEmailLambdaServiceRoleB7E53483"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByEmailLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByEmailLambdaServiceRoleDefaultPolicy1E8D4837"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/GetByEmailLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbGetByEmailLambdaB5E1862F"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/HourlyCronRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbHourlyCronRule61FC4FA1"
+          }
+        ],
+        "/EnersaStack-dev/dev-dynamodb/HourlyCronRule/AllowEventRuleEnersaStackdevdevdynamodbenersadevcronFEEC64C6": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devdynamodbHourlyCronRuleAllowEventRuleEnersaStackdevdevdynamodbenersadevcronFEEC64C6B482F42E"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-config": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevsesconfig29A4EA85"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-topic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevsestopic25C8926E"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-events/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevseseventsServiceRoleF4B8AC4F"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-events/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevseseventsServiceRoleDefaultPolicyEDA2DEA4"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-events/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevseseventsC685B5A3"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-events/AllowSNSInvoke": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevseseventsAllowSNSInvoke0D1D8103"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-events/AllowInvoke:EnersaStackdevdevsesenersadevsestopicED27A253": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevseseventsAllowInvokeEnersaStackdevdevsesenersadevsestopicED27A2531C6C393B"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-ses-events/enersa-dev-ses-topic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevseseventsenersadevsestopic20AE4F33"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/SesEventDestination": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesSesEventDestination52BA2C56"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-send-email/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevsendemailServiceRole47B6AD33"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-send-email/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevsendemailServiceRoleDefaultPolicy90563B13"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-send-email/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevsendemail69DCD039"
+          }
+        ],
+        "/EnersaStack-dev/dev-ses/enersa-dev-send-email/SqsEventSource:EnersaStackdevdevsqsenersadevmainqueue21BF465D/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devsesenersadevsendemailSqsEventSourceEnersaStackdevdevsqsenersadevmainqueue21BF465D54CA0A4D"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapi78D9B32F"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapiDeployment29A2C7B1feb79ddfbd47677e2faf9371b35b1442"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapiDeploymentStageprodD79B5D4D"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapiEndpoint76F89468"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapienviarmails0AFB708B"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/POST/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.POST..enviar-mails": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapienviarmailsPOSTApiPermissionEnersaStackdevdevapienersadevapi0AA10B47POSTenviarmailsEDA53088"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/POST/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.POST..enviar-mails": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapienviarmailsPOSTApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47POSTenviarmailsD356FD47"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapienviarmailsPOST9B106AF1"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetinfo82F8CA6B"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..get-info": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetinfoGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetinfo9D8EFD82"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..get-info": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetinfoGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetinfo2566D7DD"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetinfoGET208215A2"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByFecha37705F57"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByFechaGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByFechaB659AF8C"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByFechaGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByFechaA05A6BB8"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByFechaGET16486068"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEstadoBBD0C9EA"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEstadoGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEstado8A70ACA2"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEstadoGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEstado0B2A1AA6"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEstadoGET1A40EB16"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEstadoAC9E4178"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEstadoGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetByEstado7EE12F36"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEstadoGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetByEstadoAEEFAD32"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEstadoGET0F71A480"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByFecha730F376D"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByFechaGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetByFecha1687BF6E"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByFechaGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetByFechaE8F7BA7F"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByFechaGET79F0FA85"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEmail6CB2B6DB"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEmailGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEmail5D9DDAFC"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEmailGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEmail7389B10C"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetAllByEmailGETDD55B2FB"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEmail0FB6CBEB"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEmailGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetByEmailF7C4574B"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEmailGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetByEmailE1FC9322"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapigetByEmailGET0194042D"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/UsagePlan/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapiUsagePlan3C4319D7"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/UsagePlan/UsagePlanKeyResource:EnersaStackdevdevapienersadevapiApiKeyADD5D76C": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapiUsagePlanUsagePlanKeyResourceEnersaStackdevdevapienersadevapiApiKeyADD5D76CA1700D02"
+          }
+        ],
+        "/EnersaStack-dev/dev-api/enersa-dev-api/ApiKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "devapienersadevapiApiKey0251E2DB"
+          }
+        ],
+        "/EnersaStack-dev/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/EnersaStack-dev/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/EnersaStack-dev/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/EnersaStack-dev/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "EnersaStack-dev"
+    },
+    "EnersaStack-prod.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "EnersaStack-prod.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "EnersaStack-prod": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "EnersaStack-prod.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/18153553178e4d738ba878ae7c199f7c9bd2fdd23648407d771a77a907d64662.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "EnersaStack-prod.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "EnersaStack-prod.assets"
+      ],
+      "metadata": {
+        "/EnersaStack-prod/prod-sqs/enersa-prod-dlq/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsqsenersaproddlq7B64292D"
+          }
+        ],
+        "/EnersaStack-prod/prod-sqs/enersa-prod-main-queue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsqsenersaprodmainqueue77C9C324"
+          }
+        ],
+        "/EnersaStack-prod/prod-sqs/enersa-prod-sqs-processor/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsqsenersaprodsqsprocessorServiceRole10D982F4"
+          }
+        ],
+        "/EnersaStack-prod/prod-sqs/enersa-prod-sqs-processor/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsqsenersaprodsqsprocessorServiceRoleDefaultPolicyFA15A86A"
+          }
+        ],
+        "/EnersaStack-prod/prod-sqs/enersa-prod-sqs-processor/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsqsenersaprodsqsprocessor20A359EB"
+          }
+        ],
+        "/EnersaStack-prod/prod-s3/enersa-prod-email-images/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prods3enersaprodemailimages74814D5B"
+          }
+        ],
+        "/EnersaStack-prod/prod-s3/enersa-prod-email-images/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prods3enersaprodemailimagesPolicyED7E87E9"
+          }
+        ],
+        "/EnersaStack-prod/prod-s3/enersa-prod-deploy-images/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prods3enersaproddeployimagesAwsCliLayer4865A08F"
+          }
+        ],
+        "/EnersaStack-prod/prod-s3/enersa-prod-deploy-images/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prods3enersaproddeployimagesCustomResourceA6DFC6B4"
+          }
+        ],
+        "/EnersaStack-prod/prod-s3/enersa-prod-bucket-name": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prods3enersaprodbucketname4E174109"
+          }
+        ],
+        "/EnersaStack-prod/prod-s3/enersa-prod-bucket-url": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prods3enersaprodbucketurl3F50A299"
+          }
+        ],
+        "/EnersaStack-prod/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C": [
+          {
+            "type": "aws:cdk:is-custom-resource-handler-singleton",
+            "data": true
+          },
+          {
+            "type": "aws:cdk:is-custom-resource-handler-runtime-family",
+            "data": 2
+          }
+        ],
+        "/EnersaStack-prod/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ],
+        "/EnersaStack-prod/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF"
+          }
+        ],
+        "/EnersaStack-prod/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-email-table": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "proddynamodbenersaprodemailtableEB409F64"
+            }
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-email-table/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodemailtableEB409F64"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-cron/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodcronServiceRoleF7A74384"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-cron/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodcronServiceRoleDefaultPolicyDDE507B7"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-cron/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodcronF43829BE"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-get-info/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodgetinfoServiceRole1DA74E80"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-get-info/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodgetinfoServiceRoleDefaultPolicy14367B11"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-get-info/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodgetinfoA369F120"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-get-all-by-fecha/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodgetallbyfechaServiceRole1181B11B"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-get-all-by-fecha/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodgetallbyfechaServiceRoleDefaultPolicyD151DF5C"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/enersa-prod-get-all-by-fecha/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbenersaprodgetallbyfecha29DA7F8E"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetAllByEstadoLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetAllByEstadoLambdaServiceRole68C58318"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetAllByEstadoLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicyB26FB4F2"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetAllByEstadoLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetAllByEstadoLambda3DE5C90C"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByEstadoLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByEstadoLambdaServiceRoleF0A517FA"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByEstadoLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByEstadoLambdaServiceRoleDefaultPolicy8BFEDCFC"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByEstadoLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByEstadoLambda6FA08C67"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByFechaLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByFechaLambdaServiceRoleB9BED5BE"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByFechaLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByFechaLambdaServiceRoleDefaultPolicy58680CFF"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByFechaLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByFechaLambdaDDAA05F4"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetAllByEmailLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetAllByEmailLambdaServiceRoleF950EA5B"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetAllByEmailLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetAllByEmailLambdaServiceRoleDefaultPolicy3BDE714D"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetAllByEmailLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetAllByEmailLambdaEB35AB5E"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByEmailLambda/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByEmailLambdaServiceRoleEA4A32B9"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByEmailLambda/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByEmailLambdaServiceRoleDefaultPolicy425CB4F1"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/GetByEmailLambda/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbGetByEmailLambdaF9C01032"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/HourlyCronRule/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbHourlyCronRuleF1F978CE"
+          }
+        ],
+        "/EnersaStack-prod/prod-dynamodb/HourlyCronRule/AllowEventRuleEnersaStackprodproddynamodbenersaprodcron5CCF1E8A": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "proddynamodbHourlyCronRuleAllowEventRuleEnersaStackprodproddynamodbenersaprodcron5CCF1E8ABA79FF91"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-config": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsesconfig33CA12D9"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-topic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsestopicE249304D"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-events/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodseseventsServiceRoleB3D4A25C"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-events/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodseseventsServiceRoleDefaultPolicyCFD1035D"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-events/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsesevents267EBEC1"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-events/AllowSNSInvoke": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodseseventsAllowSNSInvokeFF2494E1"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-events/AllowInvoke:EnersaStackprodprodsesenersaprodsestopic8F8F04AA": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodseseventsAllowInvokeEnersaStackprodprodsesenersaprodsestopic8F8F04AA117B813A"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-ses-events/enersa-prod-ses-topic/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodseseventsenersaprodsestopicA3F673D3"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/SesEventDestination": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesSesEventDestination25DDC348"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-send-email/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsendemailServiceRoleED579D91"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-send-email/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsendemailServiceRoleDefaultPolicy4A2E58E7"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-send-email/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsendemail0992855C"
+          }
+        ],
+        "/EnersaStack-prod/prod-ses/enersa-prod-send-email/SqsEventSource:EnersaStackprodprodsqsenersaprodmainqueueA0962642/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodsesenersaprodsendemailSqsEventSourceEnersaStackprodprodsqsenersaprodmainqueueA0962642192A8BFF"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapi4AD85814"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapiDeploymentF02931A138a873a9b8eec349ec5ed0da2322ba80"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapiEndpoint08FB43E6"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/enviar-mails/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapienviarmailsC1635329"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/enviar-mails/POST/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.POST..enviar-mails": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapienviarmailsPOSTApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310POSTenviarmailsBE5E12BD"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/enviar-mails/POST/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.POST..enviar-mails": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapienviarmailsPOSTApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310POSTenviarmailsFF8C20F3"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/enviar-mails/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapienviarmailsPOSTE377EC22"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/get-info/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetinfo6F80A202"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/get-info/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..get-info": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetinfoGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetinfo07C2ABE0"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/get-info/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..get-info": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetinfoGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetinfoA2BDCB14"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/get-info/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetinfoGETF1D574C9"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByFecha/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByFecha05444369"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByFecha/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getAllByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByFechaGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetAllByFecha288CA455"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByFecha/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getAllByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByFechaGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetAllByFecha3F5A1277"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByFecha/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByFechaGETFDEBC637"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEstado/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEstado71AE752D"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEstado/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getAllByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEstadoGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetAllByEstadoCA499100"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEstado/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getAllByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEstadoGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetAllByEstado77DAB1E9"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEstado/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEstadoGET72081AC0"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEstado/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEstado0B1E7F6E"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEstado/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEstadoGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetByEstadoC8F6C4E6"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEstado/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getByEstado": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEstadoGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetByEstado97D0E482"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEstado/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEstadoGET13CACE62"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByFecha/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByFecha969DEF41"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByFecha/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByFechaGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetByFechaF94442A1"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByFecha/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getByFecha": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByFechaGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetByFecha9B52CC5B"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByFecha/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByFechaGETFD10932D"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEmail/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEmail3350C144"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEmail/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getAllByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEmailGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetAllByEmail6E91AA27"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEmail/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getAllByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEmailGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetAllByEmail0411AE25"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getAllByEmail/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetAllByEmailGET85EA3B6D"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEmail/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEmailDBF01937"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEmail/GET/ApiPermission.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEmailGETApiPermissionEnersaStackprodprodapienersaprodapi0DE9D310GETgetByEmail5F879A4B"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEmail/GET/ApiPermission.Test.EnersaStackprodprodapienersaprodapi0DE9D310.GET..getByEmail": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEmailGETApiPermissionTestEnersaStackprodprodapienersaprodapi0DE9D310GETgetByEmailBFC8C8A5"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/Default/getByEmail/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapigetByEmailGET9C37669D"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/UsagePlan/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapiUsagePlan9D26386C"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/UsagePlan/UsagePlanKeyResource:EnersaStackprodprodapienersaprodapiApiKey42ECE03F": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapiUsagePlanUsagePlanKeyResourceEnersaStackprodprodapienersaprodapiApiKey42ECE03F74D45675"
+          }
+        ],
+        "/EnersaStack-prod/prod-api/enersa-prod-api/ApiKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "prodapienersaprodapiApiKey1C5F27DC"
+          }
+        ],
+        "/EnersaStack-prod/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/EnersaStack-prod/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/EnersaStack-prod/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/EnersaStack-prod/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "EnersaStack-prod"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

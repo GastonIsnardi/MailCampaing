@@ -1,0 +1,3366 @@
+{
+ "Resources": {
+  "devsqsenersadevdlqAD64F850": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "MessageRetentionPeriod": 1209600,
+    "QueueName": "enersa-dev-dlq"
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-sqs/enersa-dev-dlq/Resource"
+   }
+  },
+  "devsqsenersadevmainqueueDBA1129B": {
+   "Type": "AWS::SQS::Queue",
+   "Properties": {
+    "DelaySeconds": 10,
+    "QueueName": "enersa-dev-main-queue",
+    "RedrivePolicy": {
+     "deadLetterTargetArn": {
+      "Fn::GetAtt": [
+       "devsqsenersadevdlqAD64F850",
+       "Arn"
+      ]
+     },
+     "maxReceiveCount": 3
+    },
+    "VisibilityTimeout": 30
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-sqs/enersa-dev-main-queue/Resource"
+   }
+  },
+  "devsqsenersadevsqsprocessorServiceRoleE9A42CA2": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-sqs/enersa-dev-sqs-processor/ServiceRole/Resource"
+   }
+  },
+  "devsqsenersadevsqsprocessorServiceRoleDefaultPolicy379BC62A": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devsqsenersadevmainqueueDBA1129B",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devsqsenersadevsqsprocessorServiceRoleDefaultPolicy379BC62A",
+    "Roles": [
+     {
+      "Ref": "devsqsenersadevsqsprocessorServiceRoleE9A42CA2"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-sqs/enersa-dev-sqs-processor/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devsqsenersadevsqsprocessorBD7C50CE": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "4ce78507b39fc5c3042ee7b974b577b23e502139e822d60277ec37e4ed407603.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "QUEUE_URL": {
+       "Ref": "devsqsenersadevmainqueueDBA1129B"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-send-sqs-event",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devsqsenersadevsqsprocessorServiceRoleE9A42CA2",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x",
+    "Timeout": 30
+   },
+   "DependsOn": [
+    "devsqsenersadevsqsprocessorServiceRoleDefaultPolicy379BC62A",
+    "devsqsenersadevsqsprocessorServiceRoleE9A42CA2"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-sqs/enersa-dev-sqs-processor/Resource",
+    "aws:asset:path": "asset.4ce78507b39fc5c3042ee7b974b577b23e502139e822d60277ec37e4ed407603",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devs3enersadevemailimagesA96C75BA": {
+   "Type": "AWS::S3::Bucket",
+   "Properties": {
+    "BucketName": "enersa-dev-email-template-images",
+    "CorsConfiguration": {
+     "CorsRules": [
+      {
+       "AllowedHeaders": [
+        "*"
+       ],
+       "AllowedMethods": [
+        "GET"
+       ],
+       "AllowedOrigins": [
+        "*"
+       ]
+      }
+     ]
+    },
+    "PublicAccessBlockConfiguration": {
+     "BlockPublicAcls": false,
+     "BlockPublicPolicy": false,
+     "IgnorePublicAcls": false,
+     "RestrictPublicBuckets": false
+    },
+    "Tags": [
+     {
+      "Key": "aws-cdk:cr-owned:5ff53bf6",
+      "Value": "true"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-s3/enersa-dev-email-images/Resource"
+   }
+  },
+  "devs3enersadevemailimagesPolicy6BB35F1B": {
+   "Type": "AWS::S3::BucketPolicy",
+   "Properties": {
+    "Bucket": {
+     "Ref": "devs3enersadevemailimagesA96C75BA"
+    },
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "s3:GetObject",
+       "Effect": "Allow",
+       "Principal": {
+        "AWS": "*"
+       },
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "devs3enersadevemailimagesA96C75BA",
+            "Arn"
+           ]
+          },
+          "/*"
+         ]
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-s3/enersa-dev-email-images/Policy/Resource"
+   }
+  },
+  "devs3enersadevdeployimagesAwsCliLayer6BC9F6BB": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "1be473fb31b9ca92b2826d87592d6b342ab66fd93f4ba4e1a60e5920ced9e94c.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-s3/enersa-dev-deploy-images/AwsCliLayer/Resource",
+    "aws:asset:path": "asset.1be473fb31b9ca92b2826d87592d6b342ab66fd93f4ba4e1a60e5920ced9e94c.zip",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Content"
+   }
+  },
+  "devs3enersadevdeployimagesCustomResource3876E25B": {
+   "Type": "Custom::CDKBucketDeployment",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+      "Arn"
+     ]
+    },
+    "SourceBucketNames": [
+     {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     }
+    ],
+    "SourceObjectKeys": [
+     "b1094b1e63ca9e6b0c44ae7ddf6b758bbb789f693fe3c201ed8f56bc81ecf863.zip"
+    ],
+    "DestinationBucketName": {
+     "Ref": "devs3enersadevemailimagesA96C75BA"
+    },
+    "RetainOnDelete": false,
+    "Prune": true,
+    "OutputObjectKeys": true
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-s3/enersa-dev-deploy-images/CustomResource/Default"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           },
+           "/*"
+          ]
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           "arn:",
+           {
+            "Ref": "AWS::Partition"
+           },
+           ":s3:::",
+           {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+           }
+          ]
+         ]
+        }
+       ]
+      },
+      {
+       "Action": [
+        "s3:Abort*",
+        "s3:DeleteObject*",
+        "s3:GetBucket*",
+        "s3:GetObject*",
+        "s3:List*",
+        "s3:PutObject",
+        "s3:PutObjectLegalHold",
+        "s3:PutObjectRetention",
+        "s3:PutObjectTagging",
+        "s3:PutObjectVersionTagging"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "devs3enersadevemailimagesA96C75BA",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "devs3enersadevemailimagesA96C75BA",
+             "Arn"
+            ]
+           },
+           "/*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "Roles": [
+     {
+      "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "c6358465bf49dfae556bb430bf9c81fa578c221b82c308e3707901b1dd654762.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+     }
+    },
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "devs3enersadevdeployimagesAwsCliLayer6BC9F6BB"
+     }
+    ],
+    "Role": {
+     "Fn::GetAtt": [
+      "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.11",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+    "aws:asset:path": "asset.c6358465bf49dfae556bb430bf9c81fa578c221b82c308e3707901b1dd654762",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbenersadevemailtable28C441F9": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "emailId",
+      "AttributeType": "S"
+     },
+     {
+      "AttributeName": "estado",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "emailId",
+      "KeyType": "HASH"
+     },
+     {
+      "AttributeName": "estado",
+      "KeyType": "RANGE"
+     }
+    ],
+    "TableName": "enersa-dev-email-table"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-email-table/Resource"
+   }
+  },
+  "devdynamodbenersadevcronServiceRole0FCDE7CC": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-cron/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbenersadevcronServiceRoleDefaultPolicyE7FE4378": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "devdynamodbenersadevemailtable28C441F9",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "devsqsenersadevmainqueueDBA1129B",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbenersadevcronServiceRoleDefaultPolicyE7FE4378",
+    "Roles": [
+     {
+      "Ref": "devdynamodbenersadevcronServiceRole0FCDE7CC"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-cron/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbenersadevcron97DDF707": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "6290cd8481272e822ea5c4b19151a62338dbca22f415c67ff1c1f990762463e9.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      },
+      "QUEUE_URL": {
+       "Ref": "devsqsenersadevmainqueueDBA1129B"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-cron",
+    "Handler": "cron-job.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevcronServiceRole0FCDE7CC",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbenersadevcronServiceRoleDefaultPolicyE7FE4378",
+    "devdynamodbenersadevcronServiceRole0FCDE7CC"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-cron/Resource",
+    "aws:asset:path": "asset.6290cd8481272e822ea5c4b19151a62338dbca22f415c67ff1c1f990762463e9",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbenersadevgetinfoServiceRole4D14A7E0": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-get-info/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbenersadevgetinfoServiceRoleDefaultPolicy1F4959B6": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:Scan",
+        "dynamodb:UpdateItem",
+        "sqs:SendMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "devdynamodbenersadevemailtable28C441F9",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::GetAtt": [
+          "devsqsenersadevmainqueueDBA1129B",
+          "Arn"
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbenersadevgetinfoServiceRoleDefaultPolicy1F4959B6",
+    "Roles": [
+     {
+      "Ref": "devdynamodbenersadevgetinfoServiceRole4D14A7E0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-get-info/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbenersadevgetinfo58B62CDA": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-info",
+    "Handler": "get-info.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevgetinfoServiceRole4D14A7E0",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbenersadevgetinfoServiceRoleDefaultPolicy1F4959B6",
+    "devdynamodbenersadevgetinfoServiceRole4D14A7E0"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-get-info/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbenersadevgetallbyfechaServiceRole8E349DBA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-get-all-by-fecha/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbenersadevgetallbyfechaServiceRoleDefaultPolicy7ABC2BF1": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devdynamodbenersadevemailtable28C441F9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbenersadevgetallbyfechaServiceRoleDefaultPolicy7ABC2BF1",
+    "Roles": [
+     {
+      "Ref": "devdynamodbenersadevgetallbyfechaServiceRole8E349DBA"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-get-all-by-fecha/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbenersadevgetallbyfecha8C6B7386": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-all-by-fecha",
+    "Handler": "getAllbyFecha.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevgetallbyfechaServiceRole8E349DBA",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbenersadevgetallbyfechaServiceRoleDefaultPolicy7ABC2BF1",
+    "devdynamodbenersadevgetallbyfechaServiceRole8E349DBA"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/enersa-dev-get-all-by-fecha/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbGetAllByEstadoLambdaServiceRole08C5C784": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetAllByEstadoLambda/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy6B11A09F": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devdynamodbenersadevemailtable28C441F9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy6B11A09F",
+    "Roles": [
+     {
+      "Ref": "devdynamodbGetAllByEstadoLambdaServiceRole08C5C784"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetAllByEstadoLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbGetAllByEstadoLambda31B6C47C": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-all-by-estado",
+    "Handler": "getAllByEstado.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbGetAllByEstadoLambdaServiceRole08C5C784",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbGetAllByEstadoLambdaServiceRoleDefaultPolicy6B11A09F",
+    "devdynamodbGetAllByEstadoLambdaServiceRole08C5C784"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetAllByEstadoLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbGetByEstadoLambdaServiceRoleE05DE9E6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByEstadoLambda/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbGetByEstadoLambdaServiceRoleDefaultPolicyF5E3B672": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devdynamodbenersadevemailtable28C441F9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbGetByEstadoLambdaServiceRoleDefaultPolicyF5E3B672",
+    "Roles": [
+     {
+      "Ref": "devdynamodbGetByEstadoLambdaServiceRoleE05DE9E6"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByEstadoLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbGetByEstadoLambda9307FEE2": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-by-estado",
+    "Handler": "getByEstado.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByEstadoLambdaServiceRoleE05DE9E6",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbGetByEstadoLambdaServiceRoleDefaultPolicyF5E3B672",
+    "devdynamodbGetByEstadoLambdaServiceRoleE05DE9E6"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByEstadoLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbGetByFechaLambdaServiceRole994B2096": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByFechaLambda/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbGetByFechaLambdaServiceRoleDefaultPolicy72FA4AF4": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devdynamodbenersadevemailtable28C441F9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbGetByFechaLambdaServiceRoleDefaultPolicy72FA4AF4",
+    "Roles": [
+     {
+      "Ref": "devdynamodbGetByFechaLambdaServiceRole994B2096"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByFechaLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbGetByFechaLambdaC236958F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-by-fecha",
+    "Handler": "getByFecha.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByFechaLambdaServiceRole994B2096",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbGetByFechaLambdaServiceRoleDefaultPolicy72FA4AF4",
+    "devdynamodbGetByFechaLambdaServiceRole994B2096"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByFechaLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbGetAllByEmailLambdaServiceRoleCCD9544A": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetAllByEmailLambda/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicy220329FF": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devdynamodbenersadevemailtable28C441F9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicy220329FF",
+    "Roles": [
+     {
+      "Ref": "devdynamodbGetAllByEmailLambdaServiceRoleCCD9544A"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetAllByEmailLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbGetAllByEmailLambdaE6CD8BAB": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-all-by-email",
+    "Handler": "getAllByEmail.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbGetAllByEmailLambdaServiceRoleCCD9544A",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbGetAllByEmailLambdaServiceRoleDefaultPolicy220329FF",
+    "devdynamodbGetAllByEmailLambdaServiceRoleCCD9544A"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetAllByEmailLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbGetByEmailLambdaServiceRoleB7E53483": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByEmailLambda/ServiceRole/Resource"
+   }
+  },
+  "devdynamodbGetByEmailLambdaServiceRoleDefaultPolicy1E8D4837": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "dynamodb:Scan",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devdynamodbenersadevemailtable28C441F9",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devdynamodbGetByEmailLambdaServiceRoleDefaultPolicy1E8D4837",
+    "Roles": [
+     {
+      "Ref": "devdynamodbGetByEmailLambdaServiceRoleB7E53483"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByEmailLambda/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devdynamodbGetByEmailLambdaB5E1862F": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      }
+     }
+    },
+    "FunctionName": "enersa-dev-get-by-email",
+    "Handler": "getByEmail.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByEmailLambdaServiceRoleB7E53483",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devdynamodbGetByEmailLambdaServiceRoleDefaultPolicy1E8D4837",
+    "devdynamodbGetByEmailLambdaServiceRoleB7E53483"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/GetByEmailLambda/Resource",
+    "aws:asset:path": "asset.b536c4bcd620b2fbc98c25fed3d847cc5ea4854728d5cf9513303fab6f8fb12b",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devdynamodbHourlyCronRule61FC4FA1": {
+   "Type": "AWS::Events::Rule",
+   "Properties": {
+    "ScheduleExpression": "rate(1 hour)",
+    "State": "ENABLED",
+    "Targets": [
+     {
+      "Arn": {
+       "Fn::GetAtt": [
+        "devdynamodbenersadevcron97DDF707",
+        "Arn"
+       ]
+      },
+      "Id": "Target0"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/HourlyCronRule/Resource"
+   }
+  },
+  "devdynamodbHourlyCronRuleAllowEventRuleEnersaStackdevdevdynamodbenersadevcronFEEC64C6B482F42E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevcron97DDF707",
+      "Arn"
+     ]
+    },
+    "Principal": "events.amazonaws.com",
+    "SourceArn": {
+     "Fn::GetAtt": [
+      "devdynamodbHourlyCronRule61FC4FA1",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-dynamodb/HourlyCronRule/AllowEventRuleEnersaStackdevdevdynamodbenersadevcronFEEC64C6"
+   }
+  },
+  "devsesenersadevsesconfig29A4EA85": {
+   "Type": "AWS::SES::ConfigurationSet",
+   "Properties": {
+    "Name": "enersa-dev-ses-config"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-config"
+   }
+  },
+  "devsesenersadevsestopic25C8926E": {
+   "Type": "AWS::SNS::Topic",
+   "Properties": {
+    "DisplayName": "enersa-dev-SES Notifications Topic",
+    "TopicName": "enersa-dev-ses-notifications"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-topic/Resource"
+   }
+  },
+  "devsesenersadevseseventsServiceRoleF4B8AC4F": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-events/ServiceRole/Resource"
+   }
+  },
+  "devsesenersadevseseventsServiceRoleDefaultPolicyEDA2DEA4": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devsesenersadevseseventsServiceRoleDefaultPolicyEDA2DEA4",
+    "Roles": [
+     {
+      "Ref": "devsesenersadevseseventsServiceRoleF4B8AC4F"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-events/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devsesenersadevseseventsC685B5A3": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "11828c0090600c6a4a31c69511340be923863b635ea692e85072702c9e8d98cb.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "S3URL": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Ref": "devs3enersadevemailimagesA96C75BA"
+         },
+         ".s3.",
+         {
+          "Ref": "AWS::Region"
+         },
+         ".amazonaws.com"
+        ]
+       ]
+      },
+      "SQSURL": {
+       "Ref": "devsqsenersadevmainqueueDBA1129B"
+      },
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      },
+      "CONFIGURATION_SET": "enersa-dev-ses-config"
+     }
+    },
+    "FunctionName": "enersa-dev-ses-events",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devsesenersadevseseventsServiceRoleF4B8AC4F",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devsesenersadevseseventsServiceRoleDefaultPolicyEDA2DEA4",
+    "devsesenersadevseseventsServiceRoleF4B8AC4F"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-events/Resource",
+    "aws:asset:path": "asset.11828c0090600c6a4a31c69511340be923863b635ea692e85072702c9e8d98cb",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devsesenersadevseseventsAllowSNSInvoke0D1D8103": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devsesenersadevseseventsC685B5A3",
+      "Arn"
+     ]
+    },
+    "Principal": "sns.amazonaws.com",
+    "SourceArn": {
+     "Ref": "devsesenersadevsestopic25C8926E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-events/AllowSNSInvoke"
+   }
+  },
+  "devsesenersadevseseventsAllowInvokeEnersaStackdevdevsesenersadevsestopicED27A2531C6C393B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devsesenersadevseseventsC685B5A3",
+      "Arn"
+     ]
+    },
+    "Principal": "sns.amazonaws.com",
+    "SourceArn": {
+     "Ref": "devsesenersadevsestopic25C8926E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-events/AllowInvoke:EnersaStackdevdevsesenersadevsestopicED27A253"
+   }
+  },
+  "devsesenersadevseseventsenersadevsestopic20AE4F33": {
+   "Type": "AWS::SNS::Subscription",
+   "Properties": {
+    "Endpoint": {
+     "Fn::GetAtt": [
+      "devsesenersadevseseventsC685B5A3",
+      "Arn"
+     ]
+    },
+    "Protocol": "lambda",
+    "TopicArn": {
+     "Ref": "devsesenersadevsestopic25C8926E"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-ses-events/enersa-dev-ses-topic/Resource"
+   }
+  },
+  "devsesSesEventDestination52BA2C56": {
+   "Type": "AWS::SES::ConfigurationSetEventDestination",
+   "Properties": {
+    "ConfigurationSetName": "enersa-dev-ses-config",
+    "EventDestination": {
+     "Enabled": true,
+     "MatchingEventTypes": [
+      "send",
+      "delivery",
+      "open",
+      "click"
+     ],
+     "SnsDestination": {
+      "TopicARN": {
+       "Ref": "devsesenersadevsestopic25C8926E"
+      }
+     }
+    }
+   },
+   "DependsOn": [
+    "devsesenersadevsesconfig29A4EA85"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/SesEventDestination"
+   }
+  },
+  "devsesenersadevsendemailServiceRole47B6AD33": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-send-email/ServiceRole/Resource"
+   }
+  },
+  "devsesenersadevsendemailServiceRoleDefaultPolicy90563B13": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sqs:ChangeMessageVisibility",
+        "sqs:DeleteMessage",
+        "sqs:GetQueueAttributes",
+        "sqs:GetQueueUrl",
+        "sqs:ReceiveMessage"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "devsqsenersadevmainqueueDBA1129B",
+         "Arn"
+        ]
+       }
+      },
+      {
+       "Action": [
+        "dynamodb:DeleteItem",
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "ses:SendEmail",
+        "ses:SendRawEmail"
+       ],
+       "Effect": "Allow",
+       "Resource": "*"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "devsesenersadevsendemailServiceRoleDefaultPolicy90563B13",
+    "Roles": [
+     {
+      "Ref": "devsesenersadevsendemailServiceRole47B6AD33"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-send-email/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "devsesenersadevsendemail69DCD039": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "18e3d8a0acb68a88dd5a60a7b1484774320f159e011284fcb87f90677b145af9.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "S3URL": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Ref": "devs3enersadevemailimagesA96C75BA"
+         },
+         ".s3.",
+         {
+          "Ref": "AWS::Region"
+         },
+         ".amazonaws.com"
+        ]
+       ]
+      },
+      "SQSURL": {
+       "Ref": "devsqsenersadevmainqueueDBA1129B"
+      },
+      "TABLENAME": {
+       "Ref": "devdynamodbenersadevemailtable28C441F9"
+      },
+      "CONFIGURATION_SET": "enersa-dev-ses-config"
+     }
+    },
+    "FunctionName": "enersa-dev-send-email",
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "devsesenersadevsendemailServiceRole47B6AD33",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs22.x"
+   },
+   "DependsOn": [
+    "devsesenersadevsendemailServiceRoleDefaultPolicy90563B13",
+    "devsesenersadevsendemailServiceRole47B6AD33"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-send-email/Resource",
+    "aws:asset:path": "asset.18e3d8a0acb68a88dd5a60a7b1484774320f159e011284fcb87f90677b145af9",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "devsesenersadevsendemailSqsEventSourceEnersaStackdevdevsqsenersadevmainqueue21BF465D54CA0A4D": {
+   "Type": "AWS::Lambda::EventSourceMapping",
+   "Properties": {
+    "EventSourceArn": {
+     "Fn::GetAtt": [
+      "devsqsenersadevmainqueueDBA1129B",
+      "Arn"
+     ]
+    },
+    "FunctionName": {
+     "Ref": "devsesenersadevsendemail69DCD039"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-ses/enersa-dev-send-email/SqsEventSource:EnersaStackdevdevsqsenersadevmainqueue21BF465D/Resource"
+   }
+  },
+  "devapienersadevapi78D9B32F": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "ApiKeySourceType": "HEADER",
+    "Description": "API Gateway para manejar las solicitudes de enviar correos y obtener información.",
+    "Name": "enersa-dev-api"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Resource"
+   }
+  },
+  "devapienersadevapiDeployment29A2C7B1feb79ddfbd47677e2faf9371b35b1442": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "API Gateway para manejar las solicitudes de enviar correos y obtener información.",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "DependsOn": [
+    "devapienersadevapienviarmailsPOST9B106AF1",
+    "devapienersadevapienviarmails0AFB708B",
+    "devapienersadevapigetinfoGET208215A2",
+    "devapienersadevapigetinfo82F8CA6B",
+    "devapienersadevapigetAllByEmailGETDD55B2FB",
+    "devapienersadevapigetAllByEmail6CB2B6DB",
+    "devapienersadevapigetAllByEstadoGET1A40EB16",
+    "devapienersadevapigetAllByEstadoBBD0C9EA",
+    "devapienersadevapigetAllByFechaGET16486068",
+    "devapienersadevapigetAllByFecha37705F57",
+    "devapienersadevapigetByEmailGET0194042D",
+    "devapienersadevapigetByEmail0FB6CBEB",
+    "devapienersadevapigetByEstadoGET0F71A480",
+    "devapienersadevapigetByEstadoAC9E4178",
+    "devapienersadevapigetByFechaGET79F0FA85",
+    "devapienersadevapigetByFecha730F376D"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Deployment/Resource"
+   }
+  },
+  "devapienersadevapiDeploymentStageprodD79B5D4D": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "devapienersadevapiDeployment29A2C7B1feb79ddfbd47677e2faf9371b35b1442"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    },
+    "StageName": "prod"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/DeploymentStage.prod/Resource"
+   }
+  },
+  "devapienersadevapienviarmails0AFB708B": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "enviar-mails",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/Resource"
+   }
+  },
+  "devapienersadevapienviarmailsPOSTApiPermissionEnersaStackdevdevapienersadevapi0AA10B47POSTenviarmailsEDA53088": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devsqsenersadevsqsprocessorBD7C50CE",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/POST/enviar-mails"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/POST/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.POST..enviar-mails"
+   }
+  },
+  "devapienersadevapienviarmailsPOSTApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47POSTenviarmailsD356FD47": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devsqsenersadevsqsprocessorBD7C50CE",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/POST/enviar-mails"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/POST/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.POST..enviar-mails"
+   }
+  },
+  "devapienersadevapienviarmailsPOST9B106AF1": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devsqsenersadevsqsprocessorBD7C50CE",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapienviarmails0AFB708B"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/enviar-mails/POST/Resource"
+   }
+  },
+  "devapienersadevapigetinfo82F8CA6B": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "get-info",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/Resource"
+   }
+  },
+  "devapienersadevapigetinfoGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetinfo9D8EFD82": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevgetinfo58B62CDA",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/get-info"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..get-info"
+   }
+  },
+  "devapienersadevapigetinfoGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetinfo2566D7DD": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevgetinfo58B62CDA",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/get-info"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..get-info"
+   }
+  },
+  "devapienersadevapigetinfoGET208215A2": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbenersadevgetinfo58B62CDA",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetinfo82F8CA6B"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/get-info/GET/Resource"
+   }
+  },
+  "devapienersadevapigetAllByFecha37705F57": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getAllByFecha",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/Resource"
+   }
+  },
+  "devapienersadevapigetAllByFechaGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByFechaB659AF8C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevgetallbyfecha8C6B7386",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/getAllByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByFecha"
+   }
+  },
+  "devapienersadevapigetAllByFechaGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByFechaA05A6BB8": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbenersadevgetallbyfecha8C6B7386",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/getAllByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByFecha"
+   }
+  },
+  "devapienersadevapigetAllByFechaGET16486068": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbenersadevgetallbyfecha8C6B7386",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetAllByFecha37705F57"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByFecha/GET/Resource"
+   }
+  },
+  "devapienersadevapigetAllByEstadoBBD0C9EA": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getAllByEstado",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/Resource"
+   }
+  },
+  "devapienersadevapigetAllByEstadoGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEstado8A70ACA2": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetAllByEstadoLambda31B6C47C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/getAllByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEstado"
+   }
+  },
+  "devapienersadevapigetAllByEstadoGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEstado0B2A1AA6": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetAllByEstadoLambda31B6C47C",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/getAllByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEstado"
+   }
+  },
+  "devapienersadevapigetAllByEstadoGET1A40EB16": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbGetAllByEstadoLambda31B6C47C",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetAllByEstadoBBD0C9EA"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEstado/GET/Resource"
+   }
+  },
+  "devapienersadevapigetByEstadoAC9E4178": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getByEstado",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/Resource"
+   }
+  },
+  "devapienersadevapigetByEstadoGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetByEstado7EE12F36": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByEstadoLambda9307FEE2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/getByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEstado"
+   }
+  },
+  "devapienersadevapigetByEstadoGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetByEstadoAEEFAD32": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByEstadoLambda9307FEE2",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/getByEstado"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEstado"
+   }
+  },
+  "devapienersadevapigetByEstadoGET0F71A480": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbGetByEstadoLambda9307FEE2",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetByEstadoAC9E4178"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEstado/GET/Resource"
+   }
+  },
+  "devapienersadevapigetByFecha730F376D": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getByFecha",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/Resource"
+   }
+  },
+  "devapienersadevapigetByFechaGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetByFecha1687BF6E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByFechaLambdaC236958F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/getByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByFecha"
+   }
+  },
+  "devapienersadevapigetByFechaGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetByFechaE8F7BA7F": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByFechaLambdaC236958F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/getByFecha"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByFecha"
+   }
+  },
+  "devapienersadevapigetByFechaGET79F0FA85": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbGetByFechaLambdaC236958F",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetByFecha730F376D"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByFecha/GET/Resource"
+   }
+  },
+  "devapienersadevapigetAllByEmail6CB2B6DB": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getAllByEmail",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/Resource"
+   }
+  },
+  "devapienersadevapigetAllByEmailGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEmail5D9DDAFC": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetAllByEmailLambdaE6CD8BAB",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/getAllByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEmail"
+   }
+  },
+  "devapienersadevapigetAllByEmailGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetAllByEmail7389B10C": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetAllByEmailLambdaE6CD8BAB",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/getAllByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getAllByEmail"
+   }
+  },
+  "devapienersadevapigetAllByEmailGETDD55B2FB": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbGetAllByEmailLambdaE6CD8BAB",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetAllByEmail6CB2B6DB"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getAllByEmail/GET/Resource"
+   }
+  },
+  "devapienersadevapigetByEmail0FB6CBEB": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "devapienersadevapi78D9B32F",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "getByEmail",
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/Resource"
+   }
+  },
+  "devapienersadevapigetByEmailGETApiPermissionEnersaStackdevdevapienersadevapi0AA10B47GETgetByEmailF7C4574B": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByEmailLambdaB5E1862F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/",
+       {
+        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       },
+       "/GET/getByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/GET/ApiPermission.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEmail"
+   }
+  },
+  "devapienersadevapigetByEmailGETApiPermissionTestEnersaStackdevdevapienersadevapi0AA10B47GETgetByEmailE1FC9322": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "devdynamodbGetByEmailLambdaB5E1862F",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "devapienersadevapi78D9B32F"
+       },
+       "/test-invoke-stage/GET/getByEmail"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/GET/ApiPermission.Test.EnersaStackdevdevapienersadevapi0AA10B47.GET..getByEmail"
+   }
+  },
+  "devapienersadevapigetByEmailGET0194042D": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": true,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "GET",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "devdynamodbGetByEmailLambdaB5E1862F",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "devapienersadevapigetByEmail0FB6CBEB"
+    },
+    "RestApiId": {
+     "Ref": "devapienersadevapi78D9B32F"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Default/getByEmail/GET/Resource"
+   }
+  },
+  "devapienersadevapiUsagePlan3C4319D7": {
+   "Type": "AWS::ApiGateway::UsagePlan",
+   "Properties": {
+    "ApiStages": [
+     {
+      "ApiId": {
+       "Ref": "devapienersadevapi78D9B32F"
+      },
+      "Stage": {
+       "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+      },
+      "Throttle": {}
+     }
+    ],
+    "Throttle": {
+     "BurstLimit": 2,
+     "RateLimit": 10
+    },
+    "UsagePlanName": "enersa-dev-usage-plan"
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/UsagePlan/Resource"
+   }
+  },
+  "devapienersadevapiUsagePlanUsagePlanKeyResourceEnersaStackdevdevapienersadevapiApiKeyADD5D76CA1700D02": {
+   "Type": "AWS::ApiGateway::UsagePlanKey",
+   "Properties": {
+    "KeyId": {
+     "Ref": "devapienersadevapiApiKey0251E2DB"
+    },
+    "KeyType": "API_KEY",
+    "UsagePlanId": {
+     "Ref": "devapienersadevapiUsagePlan3C4319D7"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/UsagePlan/UsagePlanKeyResource:EnersaStackdevdevapienersadevapiApiKeyADD5D76C"
+   }
+  },
+  "devapienersadevapiApiKey0251E2DB": {
+   "Type": "AWS::ApiGateway::ApiKey",
+   "Properties": {
+    "Enabled": true,
+    "StageKeys": [
+     {
+      "RestApiId": {
+       "Ref": "devapienersadevapi78D9B32F"
+      },
+      "StageName": {
+       "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+      }
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/ApiKey/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21SwW7bMAz9lt4Vbk0H7Jy622UrltndrgFt0x4bWfJMqYEh+N8HSc6Sbj3xvSeBfHriFm4/3sH2Bk+yadrjRnMNoXLYHBWe5BDkt0D47smTKjqTwKI0DnWLED570zi2Jh5d46840/STJom8YtNrcvbVjT1NA0s6//RCxlXWTw094jiy6eOF/9VFMQ4QSquTlVT3VnMzp4YJLUruDgFFyAnsYlEtjdrOAxkH9745knv4K8TbELJ6j0Iqw9huRblcplzzRbWzwcG2NYQnrLOrBBZF0b1AKP1q1kdVSCAUnSms6bj3E8Y0qjzwXy29/4HEsUnSosQIhCc7cpMGJVD5WpqJx3Os13xROHKPjk44QyhJ3G7kZGaFlyCiesUqh32ynUFJkv4hRXQma6OMH8n9sm2UVvRDsKe9xmTqbfKFZrUbOZaiMxkty6V/+r1oIC5EXriDjnt1wJM0mmF3kkJzWjVVeHF2eNNb0Zlv3o3+nHLLORxjW4Jnefey3cLtB3h/8yzMm8kbxwNBmesfXYYVWR4DAAA="
+   },
+   "Metadata": {
+    "aws:cdk:path": "EnersaStack-dev/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "devs3enersadevbucketnameA98B6785": {
+   "Value": {
+    "Ref": "devs3enersadevemailimagesA96C75BA"
+   }
+  },
+  "devs3enersadevbucketurl291FC14E": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "devs3enersadevemailimagesA96C75BA"
+      },
+      ".s3.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".amazonaws.com"
+     ]
+    ]
+   }
+  },
+  "devapienersadevapiEndpoint76F89468": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "devapienersadevapi78D9B32F"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      ".",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-3"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-4"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-2"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Equals": [
+      {
+       "Ref": "AWS::Region"
+      },
+      "us-west-2"
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}
