@@ -1760,7 +1760,7 @@
     "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/Deployment/Resource"
    }
   },
-  "devapienersadevapiDeploymentStageprodD79B5D4D": {
+  "devapienersadevapiDeploymentStagev17AB57FD1": {
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
@@ -1769,10 +1769,10 @@
     "RestApiId": {
      "Ref": "devapienersadevapi78D9B32F"
     },
-    "StageName": "prod"
+    "StageName": "v1"
    },
    "Metadata": {
-    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/DeploymentStage.prod/Resource"
+    "aws:cdk:path": "EnersaStack-dev/dev-api/enersa-dev-api/DeploymentStage.v1/Resource"
    }
   },
   "devapienersadevapienviarmails0AFB708B": {
@@ -1826,7 +1826,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/POST/enviar-mails"
       ]
@@ -1972,7 +1972,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/get-info"
       ]
@@ -2118,7 +2118,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/getAllByFecha"
       ]
@@ -2264,7 +2264,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/getAllByEstado"
       ]
@@ -2410,7 +2410,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/getByEstado"
       ]
@@ -2556,7 +2556,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/getByFecha"
       ]
@@ -2702,7 +2702,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/getAllByEmail"
       ]
@@ -2848,7 +2848,7 @@
        },
        "/",
        {
-        "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+        "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
        },
        "/GET/getByEmail"
       ]
@@ -2952,7 +2952,7 @@
        "Ref": "devapienersadevapi78D9B32F"
       },
       "Stage": {
-       "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
       },
       "Throttle": {}
      }
@@ -2992,7 +2992,7 @@
        "Ref": "devapienersadevapi78D9B32F"
       },
       "StageName": {
-       "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
       }
      }
     ]
@@ -3055,7 +3055,7 @@
       },
       "/",
       {
-       "Ref": "devapienersadevapiDeploymentStageprodD79B5D4D"
+       "Ref": "devapienersadevapiDeploymentStagev17AB57FD1"
       },
       "/"
      ]

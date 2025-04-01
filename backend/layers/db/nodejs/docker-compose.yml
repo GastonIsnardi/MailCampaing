@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres
+    container_name: postgres-mailcampaing
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: mailcampaing_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

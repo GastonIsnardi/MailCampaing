@@ -33,6 +33,7 @@ export class EnersaStack extends cdk.Stack {
       queue: sqs.queue,
     });
     new ApiGatewayConstruct(this, `${props.stage}-api`, {
+      stageName: props.stage,
       projectName: `enersa-${props.stage}`,
       enviarMailsLambda: sqs.lambdaFunction,
       getInfoLambda: dynamoDB.getInfoLambda,

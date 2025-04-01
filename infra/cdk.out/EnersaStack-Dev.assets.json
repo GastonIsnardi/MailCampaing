@@ -105,7 +105,7 @@
         }
       }
     },
-    "7e7c90065844973546dce764547f2bc6f294181acba0294d7b54f83e5595da48": {
+    "3b523bb395c3bf6d04e0379a11149e0c66b89a085c935a15d3ef717860bebc56": {
       "source": {
         "path": "EnersaStack-dev.template.json",
         "packaging": "file"
@@ -113,7 +113,7 @@
       "destinations": {
         "current_account-current_region": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "7e7c90065844973546dce764547f2bc6f294181acba0294d7b54f83e5595da48.json",
+          "objectKey": "3b523bb395c3bf6d04e0379a11149e0c66b89a085c935a15d3ef717860bebc56.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }

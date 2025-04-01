@@ -1760,7 +1760,7 @@
     "aws:cdk:path": "EnersaStack-prod/prod-api/enersa-prod-api/Deployment/Resource"
    }
   },
-  "prodapienersaprodapiDeploymentStageprod3A9CAF15": {
+  "prodapienersaprodapiDeploymentStagev146A2ADAD": {
    "Type": "AWS::ApiGateway::Stage",
    "Properties": {
     "DeploymentId": {
@@ -1769,10 +1769,10 @@
     "RestApiId": {
      "Ref": "prodapienersaprodapi4AD85814"
     },
-    "StageName": "prod"
+    "StageName": "v1"
    },
    "Metadata": {
-    "aws:cdk:path": "EnersaStack-prod/prod-api/enersa-prod-api/DeploymentStage.prod/Resource"
+    "aws:cdk:path": "EnersaStack-prod/prod-api/enersa-prod-api/DeploymentStage.v1/Resource"
    }
   },
   "prodapienersaprodapienviarmailsC1635329": {
@@ -1826,7 +1826,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/POST/enviar-mails"
       ]
@@ -1972,7 +1972,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/get-info"
       ]
@@ -2118,7 +2118,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/getAllByFecha"
       ]
@@ -2264,7 +2264,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/getAllByEstado"
       ]
@@ -2410,7 +2410,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/getByEstado"
       ]
@@ -2556,7 +2556,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/getByFecha"
       ]
@@ -2702,7 +2702,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/getAllByEmail"
       ]
@@ -2848,7 +2848,7 @@
        },
        "/",
        {
-        "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+        "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
        },
        "/GET/getByEmail"
       ]
@@ -2952,7 +2952,7 @@
        "Ref": "prodapienersaprodapi4AD85814"
       },
       "Stage": {
-       "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+       "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
       },
       "Throttle": {}
      }
@@ -2992,7 +2992,7 @@
        "Ref": "prodapienersaprodapi4AD85814"
       },
       "StageName": {
-       "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+       "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
       }
      }
     ]
@@ -3055,7 +3055,7 @@
       },
       "/",
       {
-       "Ref": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+       "Ref": "prodapienersaprodapiDeploymentStagev146A2ADAD"
       },
       "/"
      ]

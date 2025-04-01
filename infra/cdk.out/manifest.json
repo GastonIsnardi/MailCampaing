@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/7e7c90065844973546dce764547f2bc6f294181acba0294d7b54f83e5595da48.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/3b523bb395c3bf6d04e0379a11149e0c66b89a085c935a15d3ef717860bebc56.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -388,10 +388,10 @@
             "data": "devapienersadevapiDeployment29A2C7B1feb79ddfbd47677e2faf9371b35b1442"
           }
         ],
-        "/EnersaStack-dev/dev-api/enersa-dev-api/DeploymentStage.prod/Resource": [
+        "/EnersaStack-dev/dev-api/enersa-dev-api/DeploymentStage.v1/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "devapienersadevapiDeploymentStageprodD79B5D4D"
+            "data": "devapienersadevapiDeploymentStagev17AB57FD1"
           }
         ],
         "/EnersaStack-dev/dev-api/enersa-dev-api/Endpoint": [
@@ -654,7 +654,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/18153553178e4d738ba878ae7c199f7c9bd2fdd23648407d771a77a907d64662.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/d1f5da70a869a3b25bb74be971ac1bc0881f8f80822fc34b647d3a86699a91d0.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -1024,10 +1024,10 @@
             "data": "prodapienersaprodapiDeploymentF02931A138a873a9b8eec349ec5ed0da2322ba80"
           }
         ],
-        "/EnersaStack-prod/prod-api/enersa-prod-api/DeploymentStage.prod/Resource": [
+        "/EnersaStack-prod/prod-api/enersa-prod-api/DeploymentStage.v1/Resource": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "prodapienersaprodapiDeploymentStageprod3A9CAF15"
+            "data": "prodapienersaprodapiDeploymentStagev146A2ADAD"
           }
         ],
         "/EnersaStack-prod/prod-api/enersa-prod-api/Endpoint": [

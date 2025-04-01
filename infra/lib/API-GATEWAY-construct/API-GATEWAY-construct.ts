@@ -4,6 +4,7 @@ import type * as cdk from "aws-cdk-lib";
 import type * as lambda from "aws-cdk-lib/aws-lambda";
 
 interface ApiGatewayProps extends cdk.StackProps {
+  stageName: string;
   projectName: string;
   enviarMailsLambda: lambda.Function;
   getInfoLambda: lambda.Function;
@@ -51,6 +52,9 @@ export class ApiGatewayConstruct extends Construct {
       restApiName: `${projectName}-api`,
       description: "API Gateway para manejar las solicitudes de enviar correos y obtener información.",
       apiKeySourceType: ApiKeySourceType.HEADER,
+      deployOptions: {
+        stageName: "v1",
+      },
     });
   }
 
