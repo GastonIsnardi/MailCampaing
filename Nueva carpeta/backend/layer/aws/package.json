@@ -1,0 +1,37 @@
+{
+  "name": "aws-layer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf ./dist && rimraf ./build",
+    "compile": "tsc",
+    "clean:db": "rimraf build/layer/aws/db",
+    "copy:db": "copyfiles -u 5 build/layer/aws/aws/src/**/* dist/layer/aws/",
+    "copy:mail": "copyfiles -u 3 src/SES/mail/* dist/layer/aws/SES/mail",
+    "copy:package": "copyfiles package.json ./dist/layer/aws",
+    "modify:package": "node -e \"const fs=require('fs'); const pkg=require('./dist/layer/aws/package.json'); delete pkg.devDependencies; delete pkg.scripts; fs.writeFileSync('./dist/layer/aws/package.json', JSON.stringify(pkg, null, 2));\"",
+    "install:prod": "cd ./dist/layer/aws && npm install",
+    "dist": "copyfiles -u 3 dist/layer/aws/**/* ../../dist/layer/aws/aws",
+    "build": "pnpm run clean && pnpm run compile && pnpm clean:db && pnpm copy:db && pnpm copy:package && pnpm copy:mail && pnpm modify:package && pnpm install:prod && pnpm dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@aws-sdk/client-lambda": "^3.839.0",
+    "@aws-sdk/client-ses": "^3.835.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.5",
+    "copyfiles": "^2.4.1",
+    "jest": "^30.0.3",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "aws-xray-sdk-core": "^3.10.3"
+  }
+}

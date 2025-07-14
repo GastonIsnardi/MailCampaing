@@ -1,0 +1,39 @@
+{
+  "name": "db-layer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf ../../dist/layer/db/nodejs",
+    "compile": "tsc",
+    "copy:package": "copyfiles package.json ../../dist/layer/db/db",
+    "modify:package": "node -e \"const fs=require('fs'); const pkg=require('../../dist/layer/db/db/package.json'); delete pkg.devDependencies; delete pkg.scripts; fs.writeFileSync('../../dist/layer/db/db/package.json', JSON.stringify(pkg, null, 2));\"",
+    "install:prod": "cd ../../dist/layer/db/db && npm install",
+    "build": "pnpm run clean && pnpm run compile && pnpm run copy:package && pnpm run modify:package && pnpm run install:prod",
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@aws-sdk/client-dynamodb": "^3.835.0",
+    "@aws-sdk/lib-dynamodb": "^3.835.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.4",
+    "copyfiles": "^2.4.1",
+    "jest": "^30.0.3",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^2.23.0",
+    "@aws-lambda-powertools/metrics": "^2.23.0",
+    "@aws-lambda-powertools/tracer": "^2.23.0",
+    "aws-xray-sdk-core": "^3.10.3",
+    "electrodb": "^3.4.3",
+    "joi": "^17.13.3"
+  }
+}
